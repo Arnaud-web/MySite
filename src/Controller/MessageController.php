@@ -8,6 +8,8 @@ use App\Entity\User;
 use App\Form\MessageType;
 use App\Repository\MessageRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,9 +25,34 @@ class MessageController extends AbstractController
             'messages' => $messageRepository->findAll(),
         ]);
     }
+    #[Route('/all', name: 'messages_index', methods: ['GET'])]
+
+    public function listAction( PaginatorInterface $paginator, Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $appointmentsRepository = $em->getRepository(Message::class);
+        // Find all the data on the Appointments table, filter your query as you need
+        $allAppointmentsQuery = $appointmentsRepository->createQueryBuilder('p')
+//            ->where('p.status != :status')
+//            ->setParameter('status', 'canceled')
+            ->getQuery();
+        $appointments = $paginator->paginate(
+        // Doctrine Query, not results
+            $allAppointmentsQuery,
+            // Define the page parameter
+            $request->query->getInt('page', 1),
+            // Items per page
+            5
+        );
+
+        $pagination = $appointments;
+
+        // parameters to template
+        return $this->render('message/list.html.twig', ['pagination' => $pagination]);
+    }
 
     #[Route('/{name}', name: 'message_new', methods: ['GET', 'POST'])]
-    public function new(Request $request,User $user): Response
+    public function new(PaginatorInterface $paginator,Request $request,User $user): Response
     {
 //        dd($user);
 //        dd($this->getUser()->getMessagesSend());
@@ -54,6 +81,23 @@ class MessageController extends AbstractController
 //        $messagesR =$this->getDoctrine()->getRepository(Message::class)->findBy(['userReceved'=>$user]);
 
 //    dd($messages);
+        $nombre = count($messages)/4;
+        if($nombre<1){
+            $nombre = 1;
+//            $max =
+        }
+//        dd($nombre);
+        $messagesp = $paginator->paginate(
+        // Doctrine Query, not results
+            $messages,
+            // Define the page parameter
+            $request->query->getInt('page', $nombre),
+//           dd( $request->query->getInt('page',2)),
+            // Items per page
+            4
+        );
+        $messages = $messagesp;
+
         if ($form->isSubmitted() && $form->isValid()) {
 //            dd('ok');
             $entityManager = $this->getDoctrine()->getManager();

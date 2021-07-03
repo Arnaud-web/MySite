@@ -33,7 +33,7 @@ class MessageRepository extends ServiceEntityRepository
             ->setParameter('idm', $param ['idm'])
             ->setParameter('idm1', $param ['idm1'])
             ->orderBy('m.id', 'DESC')
-            ->setMaxResults(5)
+//            ->setMaxResults(5)
             ->getQuery()
             ->getResult()
         ;

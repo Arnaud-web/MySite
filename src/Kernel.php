@@ -35,4 +35,15 @@ class Kernel extends BaseKernel
             (require $path)($routes->withPath($path), $this);
         }
     }
+
+
 }
+//// app/AppKernel.php
+//public function registerBundles()
+//{
+//    return [
+//        // ...
+//        new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
+//        // ...
+//    ];
+//}
