@@ -45,7 +45,9 @@
             <tr>
                 <th></th>
                 <th>Name</th>
-                <th>Email</th>
+                <th>Message</th>
+                <th>Date</th>
+                <th>Seen</th>
                 <th><span class="float-right ">actions</span></th>
             </tr>
         </thead>
@@ -55,8 +57,26 @@
             <tr>
                 <td style="width: 20px">
                     <img class="profile-user-img img-size-50  " src="/uploads/images/users/profil{{user.photo ? asset(user.photo) : '/avatar.png' }}" alt="User profile picture"></td>
-                <td class="col-2">{{ user.name }}</td>
-                <td class="col-2">{{ user.email }}</td>
+                <td class="col-2"><a href="{{ path('user_show', {'name': user.name}) }}" >{{ user.name }}</a></td>
+                <td class="col-2">
+                    {% if user.MessageBy(app.user.id) | length > 0 %}
+                     <p class="text-sm">{{ user.MessageBy(app.user.id)[user.MessageBy(app.user.id) | length - 1].message }}</p>
+                    {% endif %}
+                </td>
+                <td class="col-2">
+                    {% if user.MessageBy(app.user.id) | length > 0 %}
+                     <p class="text-sm">{{ user.MessageBy(app.user.id)[user.MessageBy(app.user.id) | length - 1].sendAt |date('Y-m-d H:i:s')  }}</p>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if user.MessageBy(app.user.id)[user.MessageBy(app.user.id) | length - 1].getMessageVu(user.MessageBy(app.user.id)[user.MessageBy(app.user.id) | length - 1].userReceved.id) %}
+                    {% if user.MessageBy(app.user.id)[user.MessageBy(app.user.id) | length - 1].getMessageVu(user.MessageBy(app.user.id)[user.MessageBy(app.user.id) | length - 1].userSend.id) %}
+                        <span class="description float-right font-weight-light text-sm text-sm ">{{ user.MessageBy(app.user.id)[user.MessageBy(app.user.id) | length - 1].sender(app.user)?  '' : 'Seen at '}} {{ user.MessageBy(app.user.id)[user.MessageBy(app.user.id) | length - 1].sender(app.user)?   '' : user.MessageBy(app.user.id)[user.MessageBy(app.user.id) | length - 1].getMessageVu(user.MessageBy(app.user.id)[user.MessageBy(app.user.id) | length - 1].userReceved.id).vuAt |date('Y-m-d H:i:s')  }}</span>
+                    {% endif %}
+                        {% else %}
+                        <span class= "description float-right font-weight-light text-sm text-sm badge badge-success">new</span>
+                    {% endif %}
+                </td>
                 <td >
                     <p class="float-right ">
                     <a  class="p-2" href="{{ path('user_show', {'name': user.name}) }}"><i class="fas fa-info-circle" ></i>About</a>

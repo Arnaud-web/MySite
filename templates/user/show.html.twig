@@ -45,15 +45,22 @@
             </li>
         </ul>
         {% if app.user.isFrind(user) %}
-            <a class="btn btn-primary btn-block text-red p-2"  href="{{ path('frind_new', {'id': user.id}) }}">-<i class="fa fa-user"></i> Abonnee</a>
+            <div class="row ">
+            <a class="col-6   text-center btn btn-outline-info  text-red p-2"  href="{{ path('frind_new', {'id': user.id}) }}">-<i class="fa fa-user"></i> Abonnee</a>
+            <a class="col-6  text-center btn btn-outline-info   text-white  p-2"  href="{{ path('message_new', {'name': user.name}) }}"><i class="fa fa-mail-bulk">Ecrire un message </i>
+                {% if  user.NewMessage(app.user.id) | length > 0 %}
+                    <span class="badge bg-danger navbar-badge " style="  right: auto!important;  top: auto!important;">{{ user.NewMessage(app.user.id) | length}}</span>
+                {% endif %}
+            </a>
+            </div>
         {% else %}
             <a  class="btn btn-primary btn-block p-2" href="{{ path('frind_new', {'id': user.id}) }}">+<i class="fa fa-user"></i> Abonnee</a>
 
         {% endif %}
-        {% if app.user.isFrind(user) %}
-        {% else %}
-            <a  class="btn btn-primary btn-block" href="{{ path('frind_new', {'id': user.id}) }}">suivre</a>
-        {% endif %}
+{#        {% if app.user.isFrind(user) %}#}
+{#        {% else %}#}
+{#            <a  class="btn btn-primary btn-block" href="{{ path('frind_new', {'id': user.id}) }}">suivre</a>#}
+{#        {% endif %}#}
 {#        <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a>#}
     </div>
 

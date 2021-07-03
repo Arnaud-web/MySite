@@ -27,10 +27,22 @@ class UserController extends AbstractController
     public function suivies(UserRepository $userRepository): Response
     {
         $users= $this->getUser()->getFrinds();
-//        dd($users);
+//        dd($this->getUser()->getMessagesSend());
+
         return $this->render('user/index.html.twig', [
             'users' => $users,
             'titre' => 'suivies',
+        ]);
+    }
+    #[Route('/all_messages', name: 'all_message_index', methods: ['GET'])]
+    public function allMessage(UserRepository $userRepository): Response
+    {
+        $users= $this->getUser()->getFrinds();
+
+
+        return $this->render('user/index_all_message.html.twig', [
+            'users' => $users,
+            'titre' => 'All Messages',
         ]);
     }
     #[Route('/abonnees', name: 'abonnee_index', methods: ['GET'])]
@@ -84,7 +96,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'user_show', methods: ['GET'])]
+    #[Route('/{name}', name: 'user_show', methods: ['GET'])]
     public function show(User $user): Response
     {
         return $this->render('user/show.html.twig', [

@@ -38,7 +38,7 @@ class User implements UserInterface
     private $confirm_password;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255,unique=true)
      */
     private $name;
 
@@ -92,11 +92,29 @@ class User implements UserInterface
      */
     private $myFrinds;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Message::class, mappedBy="userSend")
+     */
+    private $messagesSend;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Message::class, mappedBy="userReceved")
+     */
+    private $messagesReceved;
+
+    /**
+     * @ORM\OneToMany(targetEntity=MessageVu::class, mappedBy="user")
+     */
+    private $messageVus;
+
     public function __construct()
     {
         $this->userPhotos = new ArrayCollection();
         $this->Frinds = new ArrayCollection();
         $this->myFrinds = new ArrayCollection();
+        $this->messagesSend = new ArrayCollection();
+        $this->messagesReceved = new ArrayCollection();
+        $this->messageVus = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -375,5 +393,151 @@ class User implements UserInterface
         }else{
             return false;
         }
+    }
+
+    /**
+     * @return Collection|Message[]
+     */
+    public function getMessagesSend(): Collection
+    {
+        return $this->messagesSend;
+    }
+
+    public function getMessagesSendBy($id)
+    {
+
+        $messages_t =  $this->messagesSend;
+        $messages = new ArrayCollection();
+        foreach ($messages_t as $value){
+            if ($value->getUserReceved()->getId() == $id){
+                $messages->add($value);
+            }
+        }
+        return $messages;
+    }
+
+    public function addMessagesSend(Message $messagesSend): self
+    {
+        if (!$this->messagesSend->contains($messagesSend)) {
+            $this->messagesSend[] = $messagesSend;
+            $messagesSend->setUserSend($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessagesSend(Message $messagesSend): self
+    {
+        if ($this->messagesSend->removeElement($messagesSend)) {
+            // set the owning side to null (unless already changed)
+            if ($messagesSend->getUserSend() === $this) {
+                $messagesSend->setUserSend(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Message[]
+     */
+    public function getMessagesReceved(): Collection
+    {
+        return $this->messagesReceved;
+    }
+
+    public function addMessagesReceved(Message $messagesReceved): self
+    {
+        if (!$this->messagesReceved->contains($messagesReceved)) {
+            $this->messagesReceved[] = $messagesReceved;
+            $messagesReceved->setUserReceved($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessagesReceved(Message $messagesReceved): self
+    {
+        if ($this->messagesReceved->removeElement($messagesReceved)) {
+            // set the owning side to null (unless already changed)
+            if ($messagesReceved->getUserReceved() === $this) {
+                $messagesReceved->setUserReceved(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getNewMessage($id){
+        $messages  = new ArrayCollection();
+        foreach ($this->messagesSend as $ms){
+            if ($id == $ms->getUserReceved()->getId()) {
+                if($ms->getNew() == false){
+                 $messages->add($ms);
+                }
+            }
+        }
+        return $messages;
+    }
+
+    public function getMessageBy($id){
+        $messages  = new ArrayCollection();
+        foreach ($this->messagesSend as $ms){
+            if ($id == $ms->getUserReceved()->getId()) {
+
+                    $messages->add($ms);
+
+            }
+        }
+        return $messages;
+    }
+
+    public function getAllNewMessage($id){
+        $messages  = new ArrayCollection();
+        $users = $this->getFrinds();
+        $usersN = new ArrayCollection();
+        foreach ($users as $user) {
+            foreach ($user->messagesSend as $ms) {
+                if ($id == $ms->getUserReceved()->getId()) {
+                    if ($ms->getNew() == false) {
+                        $messages->add($ms);
+                        if(!$usersN->contains($user)){
+                            $usersN->add($user);
+                        }
+                    }
+                }
+            }
+        }
+
+        return ['messages'=>$messages,'users'=>$usersN];
+    }
+    /**
+     * @return Collection|MessageVu[]
+     */
+    public function getMessageVus(): Collection
+    {
+        return $this->messageVus;
+    }
+
+    public function addMessageVu(MessageVu $messageVu): self
+    {
+        if (!$this->messageVus->contains($messageVu)) {
+            $this->messageVus[] = $messageVu;
+            $messageVu->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessageVu(MessageVu $messageVu): self
+    {
+        if ($this->messageVus->removeElement($messageVu)) {
+            // set the owning side to null (unless already changed)
+            if ($messageVu->getUser() === $this) {
+                $messageVu->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }
