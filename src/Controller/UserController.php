@@ -55,7 +55,7 @@ class UserController extends AbstractController
             'titre' => 'Abonnees',
         ]);
     }
-    #[Route('-{id}/', name: 'frind_new', methods: ['GET'])]
+    #[Route('/-{name}/', name: 'frind_new', methods: ['GET'])]
     public function newFrind (UserRepository $userRepository,User $user=null): Response
     {
 //        dd($user);

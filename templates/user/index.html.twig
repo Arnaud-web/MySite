@@ -62,7 +62,7 @@
                     <a  class="p-2" href="{{ path('user_show', {'name': user.name}) }}"><i class="fas fa-info-circle" ></i>About</a>
 {#                        {{ app.user.isFrind(user) }}#}
                         {% if app.user.isFrind(user) %}
-                            <a class="text-red p-2"  href="{{ path('frind_new', {'id': user.id}) }}">-<i class="fa fa-user"></i></a>
+                            <a class="text-red p-2"  href="{{ path('frind_new', {'name': user.name}) }}">-<i class="fa fa-user"></i></a>
                             <a class="text-white  p-2"  href="{{ path('message_new', {'name': user.name}) }}"><i class="fa fa-mail-bulk"></i>
                                 {% if  user.NewMessage(app.user.id) | length > 0 %}
                                 <span class="badge bg-danger navbar-badge " style="  right: auto!important;  top: auto!important;">{{ user.NewMessage(app.user.id) | length}}</span>
@@ -70,7 +70,7 @@
                             </a>
 {#                            <i>{{ user.getMessagesSendBy(app.user.id) | length }}</i>#}
                         {% else %}
-                            <a  class="p-2" href="{{ path('frind_new', {'id': user.id}) }}">+<i class="fa fa-user"></i></a>
+                            <a  class="p-2" href="{{ path('frind_new', {'name': user.name}) }}">+<i class="fa fa-user"></i></a>
 
                         {% endif %}
                     </p>

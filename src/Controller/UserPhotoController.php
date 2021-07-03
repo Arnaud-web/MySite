@@ -39,7 +39,7 @@ class UserPhotoController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 //            dd($user);
-            return $this->redirectToRoute('user_photo_index');
+            return $this->redirectToRoute('user_show',['name'=>$this->getUser()->getName()]);
         }
 
         return $this->render('user_photo/new.html.twig', [
